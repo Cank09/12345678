@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Link Unlocker</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--surface:#111118;--card:#16161f;--border:#2a2a3a;--accent:#7c3aed;--accent2:#06b6d4;--success:#10b981;--danger:#ef4444;--text:#f0f0ff;--muted:#6b6b8a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 60% 40% at 20% 10%,rgba(124,58,237,.12) 0%,transparent 60%),
+             radial-gradient(ellipse 40% 50% at 80% 80%,rgba(6,182,212,.08) 0%,transparent 60%)}
+.noxy{position:fixed;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:rgba(124,58,237,.3);letter-spacing:3px;z-index:999;pointer-events:none;animation:np 3s ease-in-out infinite}
+.tl{top:14px;left:16px}.tr{top:14px;right:16px;animation-delay:.8s}
+.bl{bottom:14px;left:16px;animation-delay:1.6s}.br{bottom:14px;right:16px;animation-delay:2.4s}
+@keyframes np{0%,100%{opacity:.3}50%{opacity:.65}}
+.wrap{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:40px 20px 80px}
+.hdr{text-align:center;margin-bottom:40px}
+h1{font-size:clamp(1.8rem,6vw,2.8rem);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:8px}
+h1 span{display:block}
+h1 .gr{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:14px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(124,58,237,.35),transparent)}
+.lbl{font-size:11px;font-family:'Space Mono',monospace;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.lbl::before{content:'';width:16px;height:1px;background:var(--accent)}
+input[type=url],input[type=text]{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:13px 15px;color:var(--text);font-family:'Space Mono',monospace;font-size:13px;outline:none;transition:border-color .2s,box-shadow .2s}
+input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,58,237,.13)}
+input::placeholder{color:var(--muted)}
+.sopt{border:1.5px solid var(--border);border-radius:13px;margin-bottom:9px;overflow:hidden;transition:border-color .2s}
+.sopt.on{border-color:var(--accent)}
+.sopt-hd{display:flex;align-items:center;gap:12px;padding:13px 15px;cursor:pointer;background:var(--surface);user-select:none;transition:background .2s}
+.sopt-hd:hover{background:rgba(124,58,237,.06)}
+.sico{font-size:19px;width:32px;text-align:center;flex-shrink:0}
+.stxt{flex:1}
+.sname{font-size:14px;font-weight:700}
+.shint{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
+.tbox{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;transition:all .2s}
+.sopt.on .tbox{background:var(--accent);border-color:var(--accent);color:#fff}
+.sbdy{display:none;padding:13px 15px;border-top:1px solid var(--border);background:rgba(124,58,237,.04)}
+.sopt.on .sbdy{display:block}
+.ilbl{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:7px}
+.cnt{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--surface);border-radius:9px;margin-top:4px;font-family:'Space Mono',monospace;font-size:12px;color:var(--muted)}
+.cnt b{color:var(--accent2)}
+.btn-gen{width:100%;padding:17px;background:linear-gradient(135deg,var(--accent),#5b21b6);border:none;border-radius:13px;color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-gen:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,.4)}
+.btn-gen:active{transform:translateY(0)}
+.btn-gen:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+.res{display:none;margin-top:16px;animation:up .4s cubic-bezier(.16,1,.3,1)}
+.res.show{display:block}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.res-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--success);box-shadow:0 0 8px var(--success);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.big-link-box{background:var(--surface);border:2px solid var(--success);border-radius:14px;padding:18px;margin-bottom:10px}
+.big-link-label{font-size:11px;font-family:'Space Mono',monospace;color:var(--success);letter-spacing:2px;text-transform:uppercase;margin-bottom:9px}
+.big-link-text{font-family:'Space Mono',monospace;font-size:12px;color:var(--accent2);word-break:break-all;line-height:1.7;background:var(--bg);border-radius:9px;padding:13px;border:1px solid var(--border);user-select:all}
+.btn-cp{width:100%;margin-top:11px;padding:13px;background:linear-gradient(135deg,var(--success),#059669);border:none;border-radius:11px;color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-cp:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(16,185,129,.4)}
+.btn-cp.cp{background:var(--card);color:var(--success);border:2px solid var(--success);transform:none;box-shadow:none}
+.info-box{background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.2);border-radius:11px;padding:14px 16px;font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);line-height:1.8}
+.info-box b{color:var(--accent2)}
+
+/* UNLOCK PAGE */
+.us{border:1.5px solid var(--border);border-radius:13px;margin-bottom:11px;overflow:hidden;transition:border-color .25s}
+.us.done{border-color:var(--success)}
+.us.nope{border-color:var(--danger)!important;animation:shake .45s cubic-bezier(.36,.07,.19,.97)}
+@keyframes shake{0%,100%{transform:translateX(0)}15%,55%{transform:translateX(-12px)}35%,75%{transform:translateX(12px)}25%,65%{transform:translateX(-7px)}45%,85%{transform:translateX(7px)}}
+.us-row{display:flex;align-items:center;gap:13px;padding:15px 17px;background:var(--surface);transition:background .25s}
+.us.nope .us-row{background:rgba(239,68,68,.07)}
+.us.done .us-row{background:rgba(16,185,129,.04)}
+.unum{width:28px;height:28px;border-radius:8px;background:rgba(124,58,237,.18);color:var(--accent2);display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0;transition:all .25s}
+.us.done .unum{background:var(--success);color:#fff}
+.us.nope .unum{background:var(--danger);color:#fff}
+.uinfo{flex:1}
+.uname{font-size:14px;font-weight:700;transition:color .25s}
+.us.nope .uname{color:var(--danger)}
+.usub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
+.btn-go{flex-shrink:0;padding:8px 16px;border:1.5px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);border-radius:9px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;transition:all .2s}
+.btn-go:hover{border-color:var(--accent2);color:var(--accent2);background:rgba(6,182,212,.08)}
+.us.done .btn-go{opacity:.3;pointer-events:none}
+.btn-conf{width:calc(100% - 32px);margin:0 16px 15px;padding:11px;background:rgba(16,185,129,.08);border:1.5px solid rgba(16,185,129,.25);color:var(--success);border-radius:10px;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:7px}
+.btn-conf:hover:not(:disabled){background:rgba(16,185,129,.18)}
+.btn-conf:disabled{opacity:.3;cursor:not-allowed}
+.us.done .btn-conf{opacity:.35;pointer-events:none}
+.pbar-wrap{background:var(--surface);border-radius:10px;height:5px;overflow:hidden;margin-bottom:6px}
+.pbar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;transition:width .4s cubic-bezier(.16,1,.3,1)}
+.btn-unlock{width:100%;padding:19px;background:linear-gradient(135deg,var(--success),#059669);border:none;border-radius:13px;color:#fff;font-family:'Syne',sans-serif;font-size:17px;font-weight:800;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
+.btn-unlock:disabled{opacity:.35;cursor:not-allowed}
+.btn-unlock:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(16,185,129,.4)}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--card);border:1px solid var(--success);border-radius:11px;padding:13px 18px;font-size:13px;font-weight:700;color:var(--success);z-index:100;display:flex;align-items:center;gap:9px;transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.16,1,.3,1)}
+.toast.show{transform:translateY(0);opacity:1}
+</style>
+</head>
+<body>
+<div class="noxy tl">NOXY</div><div class="noxy tr">NOXY</div>
+<div class="noxy bl">NOXY</div><div class="noxy br">NOXY</div>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast">✓ &nbsp;¡Link copiado!</div>
+
+<script>
+const STEPS=[
+  {id:'yt_like',  icon:'👍',name:'Dale Like al video',   hint:'YouTube · like',        ph:'https://youtube.com/watch?v=...',act:'Dale like al video'},
+  {id:'yt_sub',   icon:'🔔',name:'Suscribirse al canal', hint:'YouTube · suscripción', ph:'https://youtube.com/@micanal',  act:'Suscríbete al canal'},
+  {id:'discord',  icon:'💬',name:'Unirse al Discord',    hint:'Discord · servidor',    ph:'https://discord.gg/...',         act:'Únete al servidor'},
+  {id:'yt_com',   icon:'✏️',name:'Comentar el video',    hint:'YouTube · comentario',  ph:'https://youtube.com/watch?v=...',act:'Comenta el video'},
+  {id:'ig',       icon:'📸',name:'Seguir en Instagram',  hint:'Instagram · perfil',    ph:'https://instagram.com/usuario', act:'Sigue el perfil'},
+  {id:'telegram', icon:'✈️',name:'Unirse a Telegram',    hint:'Telegram · canal/grupo',ph:'https://t.me/canal',            act:'Únete al canal'},
+  {id:'twitter',  icon:'🐦',name:'Seguir en Twitter/X',  hint:'Twitter/X · perfil',    ph:'https://twitter.com/usuario',   act:'Sigue en Twitter/X'},
+  {id:'tiktok',   icon:'🎵',name:'Seguir en TikTok',     hint:'TikTok · perfil',       ph:'https://tiktok.com/@usuario',   act:'Sigue en TikTok'},
+];
+
+// ── ROUTER ──────────────────────────────────────────────────────────
+// Si hay ?id= en la URL → modo unlock
+// Si no → modo builder
+const urlParams = new URLSearchParams(location.search);
+const unlockId  = urlParams.get('id');
+
+if(unlockId){
+  // Intentar leer datos desde localStorage (mismo dominio) o desde el hash
+  let data = null;
+  try{ data = JSON.parse(localStorage.getItem('ul_'+unlockId)); }catch(e){}
+  // Fallback: datos en el hash (cuando se comparte con hash embebido)
+  if(!data && location.hash.length > 1){
+    try{ data = JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(1))))); }catch(e){}
+  }
+  if(data) renderUnlock(data);
+  else renderError();
+} else {
+  renderBuilder();
+}
+
+// ═══════════════════════════════════════════
+//  BUILDER
+// ═══════════════════════════════════════════
+function renderBuilder(){
+  document.getElementById('app').innerHTML=`
+    <div class="hdr">
+      <h1><span>Crea tu</span><span class="gr">Link Protegido</span></h1>
+    </div>
+    <div class="card">
+      <div class="lbl">Título que verán tus usuarios</div>
+      <input type="text" id="titleInput" placeholder="Ej: Descarga el pack exclusivo..." maxlength="60"/>
+    </div>
+    <div class="card">
+      <div class="lbl">Link que quieres proteger</div>
+      <input type="url" id="destUrl" placeholder="https://mega.nz/file/... · cualquier enlace" oninput="upd()"/>
+    </div>
+    <div class="card">
+      <div class="lbl">Pasos requeridos</div>
+      <div id="sc"></div>
+      <div class="cnt"><span><b id="selN">0</b> pasos activos</span><span>mín. 1</span></div>
+    </div>
+    <button class="btn-gen" id="btnG" disabled onclick="gen()">🔐 &nbsp;Generar Link</button>
+    <div class="card res" id="res">
+      <div class="res-hd"><div class="dot"></div>
+        <div>
+          <div style="font-weight:800;font-size:15px">¡Listo para compartir!</div>
+          <div style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace">Copia y pégalo donde quieras</div>
+        </div>
+      </div>
+      <div class="big-link-box">
+        <div class="big-link-label">🔗 Tu link</div>
+        <div class="big-link-text" id="outUrl"></div>
+        <button class="btn-cp" id="bcp" onclick="cpUrl()">📋 &nbsp;Copiar Link</button>
+      </div>
+    </div>`;
+
+  const sc=document.getElementById('sc');
+  STEPS.forEach(s=>{
+    const d=document.createElement('div');
+    d.className='sopt';d.id='o-'+s.id;
+    d.innerHTML=`
+      <div class="sopt-hd" onclick="tog('${s.id}')">
+        <span class="sico">${s.icon}</span>
+        <div class="stxt"><div class="sname">${s.name}</div><div class="shint">${s.hint}</div></div>
+        <div class="tbox" id="tb-${s.id}"></div>
+      </div>
+      <div class="sbdy">
+        <div class="ilbl">LINK PARA ESTE PASO</div>
+        <input type="url" id="u-${s.id}" placeholder="${s.ph}" oninput="upd()"/>
+      </div>`;
+    sc.appendChild(d);
+  });
+  upd();
+}
+
+function tog(id){document.getElementById('o-'+id).classList.toggle('on');upd()}
+function upd(){
+  const dest=document.getElementById('destUrl')?.value.trim();
+  const act=STEPS.filter(s=>document.getElementById('o-'+s.id)?.classList.contains('on'));
+  document.getElementById('selN').textContent=act.length;
+  const filled=act.every(s=>document.getElementById('u-'+s.id)?.value.trim());
+  document.getElementById('btnG').disabled=!(dest&&act.length>0&&filled);
+}
+
+function gen(){
+  const dest  = document.getElementById('destUrl').value.trim();
+  const title = document.getElementById('titleInput').value.trim() || 'Link Unlocker';
+  const steps = STEPS
+    .filter(s=>document.getElementById('o-'+s.id).classList.contains('on'))
+    .map(s=>({icon:s.icon,name:s.name,act:s.act,url:document.getElementById('u-'+s.id).value.trim()}));
+
+  const data = {dest, title, steps};
+
+  // Generar ID corto aleatorio
+  const id = Math.random().toString(36).slice(2,10);
+
+  // Guardar en localStorage (funciona cuando el creador y usuario usan el mismo sitio/dominio)
+  try{ localStorage.setItem('ul_'+id, JSON.stringify(data)); }catch(e){}
+
+  // También codificar en el hash como fallback universal
+  const hash = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+
+  // El link: misma página + ?id=XXX + #hash (el hash es el fallback)
+  const base = location.href.split('?')[0].split('#')[0];
+  const link = `${base}?id=${id}#${hash}`;
+
+  document.getElementById('outUrl').textContent = link;
+  const r=document.getElementById('res'); r.classList.add('show');
+  setTimeout(()=>r.scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+}
+
+function cpUrl(){
+  const txt=document.getElementById('outUrl').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const b=document.getElementById('bcp');
+    b.innerHTML='✅ &nbsp;¡Copiado!'; b.classList.add('cp');
+    showToast();
+    setTimeout(()=>{b.innerHTML='📋 &nbsp;Copiar Link'; b.classList.remove('cp');},2500);
+  }).catch(()=>{
+    const el=document.getElementById('outUrl');
+    const r=document.createRange(); r.selectNode(el);
+    window.getSelection().removeAllRanges(); window.getSelection().addRange(r);
+    document.execCommand('copy'); showToast();
+  });
+}
+
+// ═══════════════════════════════════════════
+//  UNLOCK PAGE
+// ═══════════════════════════════════════════
+function renderUnlock(data){
+  const {dest, title, steps} = data;
+  const done = new Set();
+  // tracking si el usuario fue a la pestaña externa
+  const wentOut = new Array(steps.length).fill(false);
+
+  document.title = title || 'Link Unlocker';
+
+  document.getElementById('app').innerHTML=`
+    <div class="hdr">
+      <h1><span class="gr">${esc(title||'Link Unlocker')}</span></h1>
+    </div>
+    <div class="card">
+      <div class="lbl">Progreso</div>
+      <div class="pbar-wrap"><div class="pbar" id="pb" style="width:0%"></div></div>
+      <div style="font-family:'Space Mono',monospace;font-size:12px;color:var(--muted);margin-top:7px">
+        <span id="pc" style="color:var(--accent2);font-weight:700">0</span> / ${steps.length} completados
+      </div>
+    </div>
+    <div id="sw"></div>
+    <button class="btn-unlock" id="bu" disabled onclick="location.href='${dest.replace(/'/g,"\\'")}'"
+    >🔓 &nbsp;Acceder</button>`;
+
+  const sw = document.getElementById('sw');
+  steps.forEach((s,i)=>{
+    const div=document.createElement('div');
+    div.className='us'; div.id='us-'+i;
+    div.innerHTML=`
+      <div class="us-row">
+        <div class="unum" id="un-${i}">${i+1}</div>
+        <div class="uinfo">
+          <div class="uname">${s.icon} ${esc(s.name)}</div>
+          <div class="usub">${esc(s.act)}</div>
+        </div>
+        <a class="btn-go" id="go-${i}" href="${esc(s.url)}" target="_blank" rel="noopener">Ir →</a>
+      </div>
+      <button class="btn-conf" id="cf-${i}" disabled>✓ &nbsp;Confirmar</button>`;
+    sw.appendChild(div);
+
+    // Cuando el usuario hace clic en "Ir →" marcamos que salió para este paso
+    document.getElementById('go-'+i).addEventListener('click', ()=>{
+      if(!done.has(i)) wentOut[i] = true;
+    });
+
+    document.getElementById('cf-'+i).addEventListener('click', ()=>conf(i));
+  });
+
+  // Cuando regresa a la pestaña: si salió para un paso, habilitar confirmar
+  // Si NO salió (nunca fue al link), hacer shake+rojo
+  document.addEventListener('visibilitychange', ()=>{
+    if(!document.hidden){
+      steps.forEach((_,i)=>{
+        if(done.has(i)) return;
+        if(wentOut[i]){
+          // Fue al link → habilitar confirmar
+          document.getElementById('cf-'+i).disabled = false;
+        } else {
+          // No fue al link → shake + rojo
+          const el=document.getElementById('us-'+i);
+          el.classList.remove('nope'); void el.offsetWidth; el.classList.add('nope');
+          document.getElementById('un-'+i).style.background='var(--danger)';
+          document.getElementById('un-'+i).style.color='#fff';
+          setTimeout(()=>{
+            el.classList.remove('nope');
+            if(!done.has(i)){
+              document.getElementById('un-'+i).style.background='';
+              document.getElementById('un-'+i).style.color='';
+            }
+          },1600);
+        }
+      });
+    }
+  });
+}
+
+function conf(i){
+  if(done.has(i)) return;
+  done.add(i);
+  document.getElementById('us-'+i).classList.add('done');
+  document.getElementById('un-'+i).textContent='✓';
+  document.getElementById('cf-'+i).disabled=true;
+  const steps_count = document.querySelectorAll('.us').length;
+  const pct=Math.round(done.size/steps_count*100);
+  document.getElementById('pb').style.width=pct+'%';
+  document.getElementById('pc').textContent=done.size;
+  if(done.size===steps_count) document.getElementById('bu').disabled=false;
+}
+
+function renderError(){
+  document.getElementById('app').innerHTML=`
+    <div style="text-align:center;padding:80px 20px">
+      <div style="font-size:48px;margin-bottom:20px">🔗</div>
+      <h1 style="font-size:1.5rem;margin-bottom:12px">Link no encontrado</h1>
+      <p style="color:var(--muted);font-family:'Space Mono',monospace;font-size:13px;line-height:1.8">
+        Este link puede haber expirado o ser inválido.<br>
+        <a href="${location.href.split('?')[0]}" style="color:var(--accent2);text-decoration:none">← Crear un nuevo link</a>
+      </p>
+    </div>`;
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(){const t=document.getElementById('toast');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+</script>
+</body>
+</html>
